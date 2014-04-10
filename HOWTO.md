@@ -12,7 +12,7 @@ requirements.
 
 The most up-to date version of this document is available at:
 
-    https://github.com/pooler/electrum-ltc-server/blob/master/HOWTO.md
+    https://github.com/CryptoRepairCrew/electrum-multicoin-server/blob/master/HOWTO.md
 
 Conventions
 -----------
@@ -20,8 +20,8 @@ Conventions
 In this document, lines starting with a hash sign (#) or a dollar sign ($)
 contain commands. Commands starting with a hash should be run as root,
 commands starting with a dollar should be run as a normal user (in this
-document, we assume that user is called 'litecoin'). We also assume the
-litecoin user has sudo rights, so we use '$ sudo command' when we need to.
+document, we assume that user is called 'electrum'). We also assume the
+electrum user has sudo rights, so we use '$ sudo command' when we need to.
 
 Strings that are surrounded by "lower than" and "greater than" ( < and > )
 should be replaced by the user with something appropriate. For example,
@@ -54,9 +54,9 @@ Python libraries.
 
 **Hardware.** The lightest setup is a pruning server with diskspace 
 requirements of about 4 GB for the electrum database. However note that 
-you also need to run litecoind and keep a copy of the full blockchain, 
+you also need to run a coind and keep a copy of the full blockchain, 
 which is roughly 4 GB in April 2014. If you have less than 2 GB of RAM 
-make sure you limit litecoind to 8 concurrent connections. If you have more 
+make sure you limit a coind to 8 concurrent connections. If you have more 
 ressources to  spare you can run the server with a higher limit of historic 
 transactions per address. CPU speed is important, mostly for the initial block 
 chain import, but also if you plan to run a public Electrum server, which 
@@ -67,21 +67,21 @@ has enough RAM to hold and procss the leveldb database in tmpfs (e.g. /dev/shm).
 Instructions
 ------------
 
-### Step 1. Create a user for running litecoind and Electrum server
+### Step 1. Create a user for running a coind and Electrum server
 
 This step is optional, but for better security and resource separation I
-suggest you create a separate user just for running `litecoind` and Electrum.
+suggest you create a separate user just for running  a 'coind` and Electrum.
 We will also use the `~/bin` directory to keep locally installed files
 (others might want to use `/usr/local/bin` instead). We will download source
 code files to the `~/src` directory.
 
-    $ sudo adduser litecoin --disabled-password
+    $ sudo adduser electrum --disabled-password
     $ sudo apt-get install git
-    # su - litecoin
+    # su - electrum
     $ mkdir ~/bin ~/src
     $ echo $PATH
 
-If you don't see `/home/litecoin/bin` in the output, you should add this line
+If you don't see `/home/electrum/bin` in the output, you should add this line
 to your `.bashrc`, `.profile` or `.bash_profile`, then logout and relogin:
 
     PATH="$HOME/bin:$PATH"
@@ -93,17 +93,17 @@ our ~/bin directory:
 
     $ mkdir -p ~/src/electrum
     $ cd ~/src/electrum
-    $ git clone https://github.com/pooler/electrum-ltc-server.git server
+    $ git clone https://github.com/CryptoRepairCrew/electrum-multicoin-server.git server
     $ chmod +x ~/src/electrum/server/start
-    $ ln -s ~/src/electrum/server/start ~/bin/electrum-ltc-server
+    $ ln -s ~/src/electrum/server/start ~/bin/electrum-multicoin-server
 
-### Step 3. Download litecoind
+### Step 3. Download the coind
 
-Older versions of Electrum used to require a patched version of litecoind. 
-This is not the case anymore since litecoind supports the 'txindex' option.
-We currently recommend litecoind 0.8.6.2 stable.
+Older versions of Electrum used to require a patched version of a coind. 
+This is not the case anymore since most coind's supports the 'txindex' option.
+We currently recommend Coins Based off Litecoin 0.8.6.2 stable.
 
-If you prefer to compile litecoind, here are some pointers for Ubuntu:
+If you prefer to compile a coind, here are some pointers for Ubuntu:
 
     # apt-get install make g++ python-leveldb libboost-all-dev libssl-dev libdb++-dev pkg-config libminiupnpc-dev git
     # su - litecoin
@@ -113,10 +113,10 @@ If you prefer to compile litecoind, here are some pointers for Ubuntu:
     $ strip litecoind
     $ cp -a ~/src/litecoin/src/litecoind ~/bin/litecoind
 
-### Step 4. Configure and start litecoind
+### Step 4. Configure and start the coind
 
-In order to allow Electrum to "talk" to `litecoind`, we need to set up a RPC
-username and password for `litecoind`. We will then start `litecoind` and
+In order to allow Electrum to "talk" to the `coind`, we need to set up a RPC
+username and password for the 'coind`. We will then start the  `coind` and
 wait for it to complete downloading the blockchain.
 
     $ mkdir ~/.litecoin
@@ -130,7 +130,7 @@ Write this in `litecoin.conf`:
     txindex=1
 
 
-If you have an existing installation of litecoind and have not previously
+If you have an existing installation of a coind and have not previously
 set txindex=1 you need to reindex the blockchain by running
 
     $ litecoind -reindex
@@ -139,15 +139,15 @@ If you have a fresh copy of litecoind start `litecoind`:
 
     $ litecoind
 
-Allow some time to pass, so `litecoind` connects to the network and starts
+Allow some time to pass, so the `coind` connects to the network and starts
 downloading blocks. You can check its progress by running:
 
     $ litecoind getinfo
 
-Before starting electrum server your litecoind should have processed all 
+Before starting electrum server your coind should have processed all 
 blockes and caught up to the current height of the network.
-You should also set up your system to automatically start litecoind at boot
-time, running as the 'litecoin' user. Check your system documentation to
+You should also set up your system to automatically start  the coind at boot
+time, running as the 'electrum' user. Check your system documentation to
 find out the best way to do this.
 
 ### Step 5. Install Electrum dependencies
@@ -192,12 +192,6 @@ The section in the electrum server configuration file (see step 10) looks like t
      pruning_limit = 100
 
 ### Step 8. Import blockchain into the database or download it
-
-It's recommended to fetch a pre-processed leveldb from the net
-
-You can fetch recent copies of electrum leveldb databases and further instructions 
-from the Electrum full archival server foundry at:
-http://foundry.electrum.org/ 
 
 Alternatively if you have the time and nerve you can import the blockchain yourself.
 
@@ -262,12 +256,12 @@ in case you need to restore it.
 
 ### Step 10. Configure Electrum server
 
-Electrum reads a config file (/etc/electrum-ltc.conf) when starting up. This
+Electrum reads a config file (/etc/electrum.conf) when starting up. This
 file includes the database setup, litecoind RPC setup, and a few other
 options.
 
-    $ sudo cp ~/src/electrum/server/electrum.conf.sample /etc/electrum-ltc.conf
-    $ sudo $EDITOR /etc/electrum-ltc.conf
+    $ sudo cp ~/src/electrum/server/electrum.conf.sample /etc/electrum.conf
+    $ sudo $EDITOR /etc/electrum.conf
 
 Go through the sample config options and set them to your liking.
 If you intend to run the server publicly have a look at README-IRC.md 
@@ -292,7 +286,7 @@ Two more things for you to consider:
 
 1. To increase security you may want to close litecoind for incoming connections and connect outbound only
 
-2. Consider restarting litecoind (together with electrum-server) on a weekly basis to clear out unconfirmed
+2. Consider restarting the coind (together with electrum-server) on a weekly basis to clear out unconfirmed
    transactions from the local the memory pool which did not propagate over the network
 
 ### Step 12. (Finally!) Run Electrum server

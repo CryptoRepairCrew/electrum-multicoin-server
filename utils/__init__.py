@@ -108,6 +108,7 @@ def public_key_to_bc_address(public_key):
 
 
 def hash_160_to_bc_address(h160, addrtype = 48):
+    addrtype = config.get('bitcoind','pubkey_address')
     if h160 == 'None':
         return 'None'
     vh160 = chr(addrtype) + h160
